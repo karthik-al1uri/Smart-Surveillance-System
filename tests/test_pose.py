@@ -18,7 +18,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 from src.common.config import load_config, get_project_root
 from src.common.visualization import draw_detections, draw_frame_analysis, draw_poses
-from src.detection.combined_pipeline import CombinedDetectionPipeline, FrameAnalysis
+from src.detection.combined_pipeline import CombinedDetectionPipeline, FrameAnalysis, TrackedFrameAnalysis
 from src.detection.pose_estimator import PoseEstimator
 from src.detection.pose_structures import (
     COCO_KEYPOINT_NAMES,
@@ -310,7 +310,7 @@ def test_single_pass_mode_disabled_no_person_dets(config, blank_frame):
 @pytest.mark.skipif(not MODEL_EXISTS, reason="yolov8m-pose.pt not found")
 def test_combined_pipeline_flow(pipeline, blank_frame):
     analysis = pipeline.process_frame(blank_frame, camera_id="cam0", frame_id=0)
-    assert isinstance(analysis, FrameAnalysis)
+    assert isinstance(analysis, (FrameAnalysis, TrackedFrameAnalysis))
     assert analysis.camera_id == "cam0"
     assert analysis.frame_id == 0
     assert isinstance(analysis.person_detections, list)

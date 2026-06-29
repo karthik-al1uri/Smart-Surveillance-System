@@ -20,6 +20,13 @@ from src.detection.pose_estimator import PoseEstimator
 from src.detection.pose_structures import PoseResult
 from src.detection.yolo_detector import Detection, YOLODetector
 
+TRACKER_AVAILABLE = True
+try:
+    from src.detection.tracker import ByteTracker, Track
+except ImportError:
+    TRACKER_AVAILABLE = False
+    Track = None  # type: ignore
+
 logger = get_logger("detection.combined_pipeline")
 
 _NON_PERSON_CLASSES = {
@@ -53,6 +60,35 @@ class FrameAnalysis:
     inference_time_ms: float = 0.0
 
 
+@dataclass
+class TrackedFrameAnalysis:
+    """Detection, pose, and tracking results for a single frame.
+
+    Attributes:
+        camera_id: Source camera identifier.
+        frame_id: Sequential frame index.
+        timestamp: Unix timestamp of the frame.
+        frame: Original BGR frame.
+        person_detections: Person bounding boxes from YOLOv8-Pose.
+        object_detections: Non-person object detections.
+        poses: Skeleton keypoints per detected person.
+        tracks: Active tracked persons with persistent IDs.
+        inference_time_ms: Detection + pose inference time.
+        tracking_time_ms: Tracker update time.
+    """
+
+    camera_id: str
+    frame_id: int
+    timestamp: float
+    frame: np.ndarray
+    person_detections: List[Detection] = field(default_factory=list)
+    object_detections: List[Detection] = field(default_factory=list)
+    poses: List[PoseResult] = field(default_factory=list)
+    tracks: List = field(default_factory=list)
+    inference_time_ms: float = 0.0
+    tracking_time_ms: float = 0.0
+
+
 class CombinedDetectionPipeline:
     """Orchestrates pose estimation and object detection for a stream of frames.
 
@@ -77,6 +113,7 @@ class CombinedDetectionPipeline:
         self._cfg = config or load_config()
         self._pose_estimator = PoseEstimator(config=self._cfg)
         self._skip_obj = self._cfg.get("pipeline", {}).get("skip_object_detection", False)
+        self._tracker: Optional["ByteTracker"] = ByteTracker(config=self._cfg) if TRACKER_AVAILABLE else None
 
         if not self._skip_obj:
             self._obj_detector = YOLODetector(config=self._cfg)
@@ -136,17 +173,7 @@ class CombinedDetectionPipeline:
 
         elapsed_ms = (time.perf_counter() - t0) * 1000
 
-        self._stats["frames_processed"] += 1
-        self._stats["total_inference_ms"] += elapsed_ms
-        self._stats["total_persons"] += len(person_dets)
-        self._stats["total_objects"] += len(object_dets)
-
-        logger.debug(
-            "camera=%s frame=%d persons=%d objects=%d poses=%d latency=%.1fms",
-            camera_id, frame_id, len(person_dets), len(object_dets), len(poses), elapsed_ms,
-        )
-
-        return FrameAnalysis(
+        frame_analysis = FrameAnalysis(
             camera_id=camera_id,
             frame_id=frame_id,
             timestamp=ts,
@@ -155,6 +182,36 @@ class CombinedDetectionPipeline:
             object_detections=object_dets,
             poses=poses,
             inference_time_ms=elapsed_ms,
+        )
+
+        tracks: List = []
+        tracking_ms = 0.0
+        if self._tracker is not None:
+            t_track = time.perf_counter()
+            tracks = self._tracker.update(frame_analysis)
+            tracking_ms = (time.perf_counter() - t_track) * 1000
+
+        self._stats["frames_processed"] += 1
+        self._stats["total_inference_ms"] += elapsed_ms
+        self._stats["total_persons"] += len(person_dets)
+        self._stats["total_objects"] += len(object_dets)
+
+        logger.debug(
+            "camera=%s frame=%d persons=%d objects=%d poses=%d tracks=%d latency=%.1fms",
+            camera_id, frame_id, len(person_dets), len(object_dets), len(poses), len(tracks), elapsed_ms,
+        )
+
+        return TrackedFrameAnalysis(
+            camera_id=camera_id,
+            frame_id=frame_id,
+            timestamp=ts,
+            frame=frame,
+            person_detections=person_dets,
+            object_detections=object_dets,
+            poses=poses,
+            tracks=tracks,
+            inference_time_ms=elapsed_ms,
+            tracking_time_ms=tracking_ms,
         )
 
     def start(self) -> None:

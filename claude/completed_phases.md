@@ -281,3 +281,47 @@ To get meaningful predictions, train the model:
 - [x] Write `tests/test_clip_capture.py` — 40 tests, all passing
 - [x] Create `scripts/demo_clip_capture.py`
 - [x] 242/242 total tests passing, zero regressions
+
+---
+
+## Phase 9: Alert & Notification Service
+**Status:** ✅ COMPLETED
+**Completed:** 2026-06-30
+**Branch:** phase-9/alert-service
+
+**Implementation Notes:**
+- Channels: WebSocket (real-time push via websockets v16), webhook (HTTP POST + HMAC-SHA256), email (SMTP + Jinja2 templates)
+- Rate limiting: per-camera sliding window (10/min) + global sliding window (30/min)
+- Alert grouping: same camera + same category within configurable window (default 10s)
+- Escalation: periodic sweep every 30s, re-delivers via email after timeout (default 5min)
+- Email disabled by default — needs SMTP host + username in config
+- WebSocket ping_interval/ping_timeout accept None to disable heartbeat (used in tests)
+- Tests use random ports via `_free_port()` to avoid conflicts; mock HTTP server for webhook tests; smtplib.SMTP patched for email tests
+
+⚠️ HUMAN INPUT REQUIRED (for production):
+- Webhook endpoint URLs for third-party integrations
+- SMTP credentials for email notifications
+
+**Files Created/Modified:**
+- `src/alerts/alert_models.py` — `Alert`, `AlertStatus`, `AlertPriority`, `NotificationChannel`
+- `src/alerts/alert_builder.py` — `AlertBuilder` with priority inference and message generation
+- `src/alerts/alert_manager.py` — `AlertManager` with rate limiting, grouping, escalation
+- `src/alerts/notifiers/websocket_notifier.py` — `WebSocketNotifier` with broadcast + client tracking
+- `src/alerts/notifiers/webhook_notifier.py` — `WebhookNotifier` with HMAC signing and retry
+- `src/alerts/notifiers/email_notifier.py` — `EmailNotifier` with Jinja2 template and rate limit
+- `config/default.yaml` — Added `notifications` and `alerts` sections
+- `tests/test_alerts.py` — 47 tests, all passing
+- `scripts/demo_alerts.py` — Full demo with WebSocket server + simulated events
+- `requirements.txt` — Added websockets, aiohttp, jinja2
+
+**Tasks completed:**
+- [x] Define `Alert`, `AlertStatus`, `AlertPriority`, `NotificationChannel`
+- [x] Implement `AlertBuilder` with priority and message generation
+- [x] Implement `WebSocketNotifier` with client management
+- [x] Implement `WebhookNotifier` with HMAC signing and retry
+- [x] Implement `EmailNotifier` with templates and rate limiting
+- [x] Implement `AlertManager` with rate limiting, grouping, escalation
+- [x] Update `config/default.yaml` with notifications and alerts sections
+- [x] Write `tests/test_alerts.py` — 47 tests, all passing
+- [x] Create `scripts/demo_alerts.py`
+- [x] 289/289 total tests passing, zero regressions

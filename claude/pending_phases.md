@@ -29,27 +29,6 @@
 
 
 
-## Phase 9: Alert & Notification Service
-**Status:** NOT STARTED
-**Goal:** Deliver alerts through configured channels.
-
-**Tasks:**
-- [ ] Implement `src/alerts/alert_manager.py` — Central alert dispatcher
-- [ ] Implement `src/alerts/notifiers/websocket.py` — Real-time dashboard push
-- [ ] Implement `src/alerts/notifiers/webhook.py` — Third-party integration
-- [ ] Implement `src/alerts/notifiers/email.py` — SMTP email alerts
-- [ ] Add rate limiting (max 10 alerts per minute per camera)
-- [ ] Add alert grouping (same incident across cameras)
-- [ ] Add escalation rules (if no ACK in 5 min → escalate)
-- [ ] Write `tests/test_alerts.py` 
-
-⚠️ HUMAN INPUT REQUIRED:
-- For email alerts: SMTP server credentials (host, port, username, password)
-- For webhook: Target webhook URL(s) for testing
-- These can be added later — the service should work with WebSocket-only initially
-
----
-
 ## Phase 10: Event Database & API Layer
 **Status:** NOT STARTED
 **Goal:** Persist all events and serve data via REST API.

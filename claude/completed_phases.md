@@ -72,3 +72,42 @@
 - [x] Handle occluded/missing keypoints (low confidence kept, `is_visible` property)
 - [x] Combined with Phase 2 via single-pass mode (YOLOv8-Pose does detection + pose)
 - [x] Write `tests/test_pose.py` — 30 tests, all passing
+
+---
+
+## Phase 4: Person Tracking (ByteTrack)
+**Status:** ✅ COMPLETED
+**Completed:** 2026-06-29
+**Branch:** phase-4/person-tracking
+
+**Implementation Notes:**
+- ByteTrack implemented from scratch (IoU-based two-stage association, no external bytetrack library needed)
+- Kalman filter via `filterpy` — constant-velocity model, 7D state (cx, cy, area, aspect, vx, vy, va)
+- `lap.lapjv` used for Hungarian assignment (fast C-based solver); `scipy.optimize.linear_sum_assignment` as fallback
+- `Track.keypoint_history` is a `deque(maxlen=64)` — each entry is a `(17, 3)` float32 array
+- `get_track_keypoint_sequence(track_id, 16)` returns `(16, 17, 3)` array directly usable by Phase 5 LSTM
+- Pose captured on track creation (frame 0) AND on every update — no missed frames
+- `TrackedFrameAnalysis` replaces `FrameAnalysis` as pipeline output; `FrameAnalysis` retained internally
+- `draw_tracks` uses hash-based consistent colours per track_id; movement trails via last-10 bbox centres
+- 27 tracker tests + 91 total tests passing; 1 Phase 3 test updated for new return type
+- Known limitation: IoU-only re-ID; appearance features deferred to Phase 12
+
+**Files Created/Modified:**
+- `src/detection/kalman_tracker.py` — `KalmanBoxTracker`, `bbox_to_z`, `x_to_bbox`
+- `src/detection/tracker.py` — `Track` dataclass, `ByteTracker`, `compute_iou`, `compute_iou_matrix`, `linear_assignment`
+- `src/detection/combined_pipeline.py` — Added `TrackedFrameAnalysis`; `process_frame` now returns it
+- `src/common/visualization.py` — Added `draw_tracks`, `draw_tracked_frame`, `_track_color`
+- `config/default.yaml` — Added `tracker` section
+- `tests/test_tracker.py` — 27 tests covering Kalman, IoU, assignment, tracker lifecycle, keypoint history
+- `tests/test_pose.py` — Updated `test_combined_pipeline_flow` to accept `TrackedFrameAnalysis`
+- `scripts/demo_tracking.py` — CLI demo with per-frame track summary and annotated video output
+- `requirements.txt` — Added `lap`, `scipy`, `filterpy`
+
+**Tasks completed:**
+- [x] Implement `src/detection/kalman_tracker.py` — Kalman filter for bbox state prediction
+- [x] Implement `src/detection/tracker.py` — ByteTrack with two-stage IoU association
+- [x] Maintain per-track history: bbox, keypoint, pose sequences (deque maxlen=64)
+- [x] Keep keypoint history with `get_track_keypoint_sequence(id, 16)` → (16, 17, 3) for Phase 5
+- [x] Handle track creation, update, lost, removal lifecycle
+- [x] Write `tests/test_tracker.py` — 27 tests, all passing
+- [x] 91/91 total tests passing, zero regressions

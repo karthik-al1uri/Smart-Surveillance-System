@@ -28,25 +28,6 @@
 
 
 
-## Phase 4: Person Tracking (ByteTrack / BoT-SORT)
-**Status:** NOT STARTED
-**Goal:** Assign consistent IDs to detected persons across frames. Maintain identity through brief occlusions.
-
-**Tasks:**
-- [ ] Implement `src/detection/tracker.py` — Integrate ByteTrack or BoT-SORT
-- [ ] Maintain per-track history: bbox sequence, keypoint sequence, track state (active/lost/removed)
-- [ ] Keep keypoint history buffer ≥ sliding window size (32 frames minimum)
-- [ ] Handle track creation, update, and deletion lifecycle
-- [ ] Write `tests/test_tracker.py` 
-
-**Key Decisions:**
-- Start with ByteTrack (simpler, IoU-based, no appearance features needed)
-- Max lost frames before track deletion: 30 frames
-- Re-identification: IoU-based only for now (appearance features in Phase 12+)
-
-**No human input required for this phase.**
-
----
 
 ## Phase 5: Action Recognition (Keypoint Classifier)
 **Status:** NOT STARTED

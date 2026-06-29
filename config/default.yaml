@@ -139,6 +139,24 @@ alerts:
 
 dashboard_url: "http://localhost:3000"
 
+database:
+  url: "postgresql://sss_user:sss_dev_password@localhost:5432/sss_db"
+  fallback_url: "sqlite:///data/sss_dev.db"
+  auto_fallback: true
+  pool_size: 5
+  max_overflow: 10
+  pool_recycle: 3600
+  echo_sql: false
+
+auth:
+  secret_key: "change-this-in-production-please"
+  algorithm: "HS256"
+  access_token_expire_minutes: 480
+  default_admin:
+    username: "admin"
+    password: "admin"
+    role: "admin"
+
 logging:
   level: "INFO"
   format: "json"

@@ -325,3 +325,52 @@ To get meaningful predictions, train the model:
 - [x] Write `tests/test_alerts.py` — 47 tests, all passing
 - [x] Create `scripts/demo_alerts.py`
 - [x] 289/289 total tests passing, zero regressions
+
+---
+
+## Phase 10: Event Database & API Layer
+**Status:** ✅ COMPLETED
+**Completed:** 2026-06-30
+**Branch:** phase-10/database-api
+
+**Implementation Notes:**
+- Database: SQLite fallback by default (file `data/sss_dev.db`); PostgreSQL via `docker-compose.dev.yml`
+- ORM: SQLAlchemy 2.x DeclarativeBase — models: Camera, Event, AlertRecord, OperatorFeedback, User, SystemLog
+- Migrations: Alembic auto-generated initial schema from ORM models; `alembic upgrade head` creates all tables
+- Auth: SHA-256 crypt (passlib) — bcrypt 4.x breaks passlib on Python 3.14; SHA-256 used as primary scheme
+- API: FastAPI with CORS, OAuth2PasswordBearer JWT, role hierarchy (viewer → operator → admin)
+- Tests: StaticPool for SQLite in-memory so all sessions share one connection; `db_engine` injected via `create_app(engine=...)`
+- Default admin `admin/admin` created on first startup if no users exist
+
+⚠️ HUMAN INPUT REQUIRED (for production):
+- PostgreSQL credentials or confirm Docker Compose approach
+- Change `auth.secret_key` from default before any external deployment
+
+**Files Created:**
+- `src/common/db.py` — Engine factory with PostgreSQL → SQLite auto-fallback
+- `src/common/db_models.py` — All ORM models (Camera, Event, AlertRecord, OperatorFeedback, User, SystemLog)
+- `docker-compose.dev.yml` — PostgreSQL 16 container (sss_user/sss_dev_password/sss_db)
+- `alembic/` — Alembic config and initial migration
+- `src/api/auth.py` — JWT create/verify, bcrypt password hashing, role-based deps
+- `src/api/repositories.py` — EventRepository, CameraRepository, AlertRepository, UserRepository
+- `src/api/dependencies.py` — FastAPI DI: `get_db`, `get_event_repo`, `get_camera_repo`, etc.
+- `src/api/main.py` — `create_app(config, engine)` with lifespan, CORS, all routers
+- `src/api/routes/` — auth, cameras, events, alerts, clips, config, users
+- `src/api/schemas/` — Pydantic v2 schemas for all request/response types
+- `tests/test_api.py` — 47 tests (6 models, 12 repos, 5 auth, 24 API endpoints)
+- `scripts/seed_database.py` — Seeds 5 cameras, 50 events, 5 alerts, 4 users
+- `scripts/demo_api.py` — Starts uvicorn + seeds DB + exercises all endpoints
+- `config/default.yaml` — Added `database` and `auth` sections
+
+**Tasks completed:**
+- [x] Docker Compose for PostgreSQL + SQLite fallback
+- [x] SQLAlchemy ORM models (6 tables)
+- [x] Alembic initial migration
+- [x] EventRepository, CameraRepository, AlertRepository, UserRepository
+- [x] JWT authentication with role-based access control
+- [x] FastAPI app with all routes: auth, cameras, events, alerts, clips, config, users
+- [x] Pydantic schemas for all endpoints
+- [x] Write `tests/test_api.py` — 47 tests, all passing
+- [x] Create `scripts/seed_database.py`
+- [x] Create `scripts/demo_api.py`
+- [x] 336/336 total tests passing, zero regressions

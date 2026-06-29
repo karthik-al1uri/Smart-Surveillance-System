@@ -29,24 +29,6 @@
 
 
 
-## Phase 10: Event Database & API Layer
-**Status:** NOT STARTED
-**Goal:** Persist all events and serve data via REST API.
-
-**Tasks:**
-- [ ] Implement `src/common/db.py` — PostgreSQL connection via SQLAlchemy
-- [ ] Implement `src/common/models.py` — ORM models: cameras, events, alerts, feedback, logs
-- [ ] Implement `src/api/main.py` — FastAPI app with CORS, auth middleware
-- [ ] API routes: Camera CRUD, Event list/detail/search, Alert ACK/escalate/dismiss, Feedback submit, Zone CRUD, Config update, WebSocket live alerts
-- [ ] Add Alembic for database migrations
-- [ ] Write `tests/test_api.py` 
-
-⚠️ HUMAN INPUT REQUIRED:
-- PostgreSQL connection string (or confirm using Docker PostgreSQL)
-- Confirm: should we use Docker Compose to spin up PostgreSQL automatically? (Recommended: YES)
-
----
-
 ## Phase 11: Operator Dashboard (React Frontend)
 **Status:** NOT STARTED
 **Goal:** Web-based UI for live monitoring, alert review, zone editing, and analytics.

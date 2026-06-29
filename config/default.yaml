@@ -99,6 +99,46 @@ storage:
   clip_buffer_compressed: true
   retention_check_interval: 3600
 
+notifications:
+  websocket:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8765
+    ping_interval: 30
+    ping_timeout: 10
+
+  webhook:
+    enabled: false
+    endpoints: []
+
+  email:
+    enabled: false
+    smtp_host: ""
+    smtp_port: 587
+    smtp_username: ""
+    smtp_password: ""
+    use_tls: true
+    from_address: "alerts@surveillance.local"
+    recipients: []
+    min_interval_seconds: 300
+    min_priority: "high"
+
+alerts:
+  rate_limit:
+    max_alerts_per_minute: 10
+    max_alerts_per_minute_global: 30
+  grouping:
+    enabled: true
+    window_seconds: 10
+    same_camera_only: true
+  escalation:
+    enabled: true
+    timeout_seconds: 300
+    escalation_channels: ["email"]
+  history_size: 1000
+
+dashboard_url: "http://localhost:3000"
+
 logging:
   level: "INFO"
   format: "json"

@@ -39,6 +39,21 @@ tracker:
   min_hits: 3
   history_length: 64
 
+action_recognition:
+  model_path: "models/action_classifier_v1.pt"
+  device: "cpu"
+  window_size: 16
+  stride: 8
+  num_classes: 15
+  hidden_size: 128
+  num_layers: 2
+  dropout: 0.3
+  bidirectional: true
+  confidence_threshold: 0.4
+  min_keypoint_confidence: 0.3
+  min_visible_keypoints: 10
+  use_velocity_features: false
+
 ingestion:
   frame_queue_size: 30
   target_fps: 2

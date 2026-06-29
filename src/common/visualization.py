@@ -225,3 +225,96 @@ def draw_frame_analysis(frame: np.ndarray, analysis) -> np.ndarray:
     )
     _label_strip(out, info, (6, 18), _COLOR_TEXT_FG, font_scale=0.5)
     return out
+
+
+# ---------------------------------------------------------------------------
+# Zone visualization helpers
+# ---------------------------------------------------------------------------
+
+def draw_zones(
+    frame: np.ndarray,
+    zones: list,
+    active_only: bool = True,
+) -> np.ndarray:
+    """Draw zone polygons as semi-transparent overlays.
+
+    Color by type:
+    * ``restricted`` → red
+    * ``monitored``  → yellow
+    * ``safe``       → green
+    * ``perimeter``  → orange
+
+    Active zones use a solid border; inactive zones use a dashed border.
+
+    Args:
+        frame: BGR frame to annotate (not modified in place).
+        zones: List of :class:`~src.scoring.zone_models.Zone` objects.
+        active_only: If ``True``, inactive zones are still drawn but with a
+            dashed border so operators can see the zone boundaries.
+
+    Returns:
+        Annotated copy of ``frame``.
+    """
+    from src.scoring.zone_models import ZoneType
+
+    _ZONE_COLORS = {
+        ZoneType.RESTRICTED: (0, 0, 220),
+        ZoneType.MONITORED: (0, 200, 255),
+        ZoneType.SAFE: (0, 200, 0),
+        ZoneType.PERIMETER: (0, 140, 255),
+    }
+
+    out = frame.copy()
+    overlay = frame.copy()
+
+    for zone in zones:
+        if active_only and not zone.enabled:
+            continue
+        pts = np.array(zone.polygon, dtype=np.int32).reshape((-1, 1, 2))
+        color = _ZONE_COLORS.get(zone.zone_type, (180, 180, 180))
+
+        cv2.fillPoly(overlay, [pts], color)
+        out = cv2.addWeighted(overlay, 0.18, out, 0.82, 0)
+        overlay = out.copy()
+
+        cv2.polylines(out, [pts], isClosed=True, color=color, thickness=2)
+
+        cx = int(np.mean([p[0] for p in zone.polygon]))
+        cy = int(np.mean([p[1] for p in zone.polygon]))
+        _label_strip(out, zone.name, (cx - 40, cy), color, font_scale=0.45)
+
+    return out
+
+
+def draw_violations(
+    frame: np.ndarray,
+    violations: list,
+) -> np.ndarray:
+    """Highlight active rule violations on the frame.
+
+    Draws a bright flashing border around the relevant zone and adds a
+    violation label.
+
+    Args:
+        frame: BGR frame to annotate (not modified in place).
+        violations: List of :class:`~src.scoring.zone_models.ZoneViolation`.
+
+    Returns:
+        Annotated copy of ``frame``.
+    """
+    out = frame.copy()
+    _VIO_COLOR = (0, 0, 255)
+
+    for vio in violations:
+        h, w = out.shape[:2]
+        text = f"\u26a0 {vio.rule_type.value.upper()} {vio.zone_name}"
+        cv2.putText(
+            out, text,
+            (10, h - 20 - violations.index(vio) * 22),
+            cv2.FONT_HERSHEY_SIMPLEX, 0.5, _VIO_COLOR, 1, cv2.LINE_AA,
+        )
+
+    if violations:
+        cv2.rectangle(out, (0, 0), (out.shape[1] - 1, out.shape[0] - 1), _VIO_COLOR, 3)
+
+    return out

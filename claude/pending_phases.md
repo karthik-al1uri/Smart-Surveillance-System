@@ -26,29 +26,6 @@
 
 ---
 
-## Phase 2: Object Detection (YOLOv8)
-**Status:** NOT STARTED
-**Goal:** Detect persons, weapons, bags, and vehicles in each frame using YOLOv8.
-
-**Tasks:**
-- [ ] Implement `src/detection/yolo_detector.py` — Load YOLOv8 model, run inference on preprocessed frames
-- [ ] Add frame preprocessing (resize to 640x640, normalize)
-- [ ] Implement batched inference for multi-camera GPU efficiency
-- [ ] Configure confidence threshold (default 0.45) and NMS IoU threshold (default 0.5)
-- [ ] Output structured detections: class_id, class_name, bbox, confidence
-- [ ] Write `tests/test_detection.py` with sample images
-
-**Key Decisions:**
-- Start with YOLOv8m (medium) — balance of speed and accuracy
-- Use PyTorch first, export to ONNX/TensorRT for production later
-- COCO pretrained initially; fine-tune for weapons in Phase 12+
-
-⚠️ HUMAN INPUT REQUIRED:
-- Download YOLOv8m weights: `yolov8m.pt` → place in `models/` directory
-- Command: `pip install ultralytics && yolo predict model=yolov8m.pt` (will auto-download)
-- If custom weapon detection is needed later, provide annotated weapon dataset
-
----
 
 ## Phase 3: Pose Estimation (YOLOv8-Pose)
 **Status:** NOT STARTED

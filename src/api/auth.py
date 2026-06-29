@@ -17,7 +17,7 @@ from src.common.logger import get_logger
 logger = get_logger("api.auth")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
-_pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+_pwd_context = CryptContext(schemes=["sha256_crypt", "bcrypt"], deprecated="auto")
 
 _AUTH_CFG: dict = {}
 

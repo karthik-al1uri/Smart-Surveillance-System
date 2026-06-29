@@ -27,12 +27,14 @@ logger = get_logger("api.main")
 _config: dict = {}
 
 
-def create_app(config: dict | None = None) -> FastAPI:
+def create_app(config: dict | None = None, engine=None) -> FastAPI:
     """Create and configure the FastAPI application.
 
     Args:
         config: Optional config dict.  Loads from ``config/default.yaml``
             if not provided.
+        engine: Optional pre-built SQLAlchemy engine (used in tests to inject
+            a shared in-memory SQLite engine).
 
     Returns:
         Configured :class:`fastapi.FastAPI` instance.
@@ -41,7 +43,7 @@ def create_app(config: dict | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        _bootstrap(cfg)
+        _bootstrap(cfg, engine=engine)
         yield
         logger.info("API shutting down.")
 
@@ -71,17 +73,18 @@ def create_app(config: dict | None = None) -> FastAPI:
     return app
 
 
-def _bootstrap(cfg: dict) -> None:
+def _bootstrap(cfg: dict, engine=None) -> None:
     """Initialise DB, auth config, and default admin user."""
     configure_auth(cfg)
     set_runtime_config(cfg)
 
-    try:
-        engine = create_engine_from_config(cfg)
-    except Exception as exc:
-        logger.error("DB connection failed: %s — using in-memory SQLite.", exc)
-        from sqlalchemy import create_engine
-        engine = create_engine("sqlite:///:memory:", echo=False)
+    if engine is None:
+        try:
+            engine = create_engine_from_config(cfg)
+        except Exception as exc:
+            logger.error("DB connection failed: %s — using in-memory SQLite.", exc)
+            from sqlalchemy import create_engine as _ce
+            engine = _ce("sqlite:///:memory:", echo=False)
 
     init_db(engine)
     factory = get_session_factory(engine)

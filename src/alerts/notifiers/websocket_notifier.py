@@ -38,8 +38,10 @@ class WebSocketNotifier:
         self._enabled: bool = bool(cfg.get("enabled", True))
         self._host: str = cfg.get("host", "0.0.0.0")
         self._port: int = int(cfg.get("port", 8765))
-        self._ping_interval: int = int(cfg.get("ping_interval", 30))
-        self._ping_timeout: int = int(cfg.get("ping_timeout", 10))
+        pi = cfg.get("ping_interval", 30)
+        pt = cfg.get("ping_timeout", 10)
+        self._ping_interval = int(pi) if pi is not None else None
+        self._ping_timeout = int(pt) if pt is not None else None
 
         self._clients: Dict[str, object] = {}  # client_id → websocket
         self._lock = threading.Lock()

@@ -31,12 +31,14 @@ def x_to_bbox(state: np.ndarray) -> np.ndarray:
     """Convert state vector ``[cx, cy, s, r, ...]`` back to ``[x1, y1, x2, y2]``.
 
     Args:
-        state: Array of at least shape ``(4,)`` (first 4 elements used).
+        state: Array of any shape with at least 4 elements (first 4 used).
+            filterpy returns a ``(7, 1)`` column vector; we flatten it first.
 
     Returns:
         Array of shape ``(4,)`` with ``[x1, y1, x2, y2]``.
     """
-    cx, cy, s, r = float(state[0]), float(state[1]), float(state[2]), float(state[3])
+    flat = np.asarray(state).flatten()
+    cx, cy, s, r = float(flat[0]), float(flat[1]), float(flat[2]), float(flat[3])
     if s <= 0:
         s = 1.0
     w = np.sqrt(s * abs(r))

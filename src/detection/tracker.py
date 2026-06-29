@@ -210,7 +210,7 @@ class ByteTracker:
 
         pose_map: Dict[Tuple, PoseResult] = {}
         for pose in poses:
-            pose_map[pose.bbox] = pose
+            pose_map[tuple(pose.bbox)] = pose
 
         high_dets = [d for d in person_dets if d.confidence >= self._conf_split]
         low_dets = [d for d in person_dets if d.confidence < self._conf_split]
@@ -236,7 +236,7 @@ class ByteTracker:
             self._update_track(remaining_tracks[t_idx], low_dets[d_idx], ts, pose_map)
 
         for d_idx in unmatched_high:
-            self._create_track(high_dets[d_idx], ts)
+            self._create_track(high_dets[d_idx], ts, pose_map=pose_map)
 
         lost_track_ids = {remaining_tracks[i].track_id for i in still_unmatched_tracks}
         for track in self._tracks:
@@ -296,6 +296,7 @@ class ByteTracker:
         self._tracks.clear()
         self._kalman_map.clear()
         self._next_id = 1
+        self._stats = {"total_created": 0, "total_removed": 0}
         logger.info("ByteTracker reset.")
 
     def get_stats(self) -> Dict:
@@ -376,25 +377,58 @@ class ByteTracker:
 
         track.bbox_history.append(new_bbox)
 
-        pose = pose_map.get(det.bbox)
+        pose = pose_map.get(tuple(det.bbox))
+        if pose is None and pose_map:
+            det_cx = (det.bbox[0] + det.bbox[2]) / 2.0
+            det_cy = (det.bbox[1] + det.bbox[3]) / 2.0
+            best_key, best_dist = None, float("inf")
+            for key in pose_map:
+                pcx = (key[0] + key[2]) / 2.0
+                pcy = (key[1] + key[3]) / 2.0
+                d = (det_cx - pcx) ** 2 + (det_cy - pcy) ** 2
+                if d < best_dist:
+                    best_dist, best_key = d, key
+            if best_dist < 50 ** 2:
+                pose = pose_map.get(best_key)
         if pose is not None:
             track.pose_history.append(pose)
             kp_arr = np.array(pose.keypoints_as_array(), dtype=np.float32)
             track.keypoint_history.append(kp_arr)
 
-    def _create_track(self, det: Detection, ts: float) -> None:
+    def _create_track(self, det: Detection, ts: float, pose_map: Optional[Dict] = None) -> None:
         bbox_arr = np.array(list(det.bbox), dtype=np.float64)
         kf = KalmanBoxTracker(bbox_arr)
         tid = self._next_id
         self._next_id += 1
+
+        kp_hist: deque = deque(maxlen=self._history_length)
+        pose_hist: deque = deque(maxlen=self._history_length)
+
+        if pose_map:
+            pose = pose_map.get(tuple(det.bbox))
+            if pose is None:
+                det_cx = (det.bbox[0] + det.bbox[2]) / 2.0
+                det_cy = (det.bbox[1] + det.bbox[3]) / 2.0
+                best_key, best_dist = None, float("inf")
+                for key in pose_map:
+                    pcx = (key[0] + key[2]) / 2.0
+                    pcy = (key[1] + key[3]) / 2.0
+                    d = (det_cx - pcx) ** 2 + (det_cy - pcy) ** 2
+                    if d < best_dist:
+                        best_dist, best_key = d, key
+                if best_dist < 50 ** 2:
+                    pose = pose_map.get(best_key)
+            if pose is not None:
+                pose_hist.append(pose)
+                kp_hist.append(np.array(pose.keypoints_as_array(), dtype=np.float32))
 
         track = Track(
             track_id=tid,
             state="active",
             bbox=det.bbox,
             bbox_history=deque([det.bbox], maxlen=self._history_length),
-            keypoint_history=deque(maxlen=self._history_length),
-            pose_history=deque(maxlen=self._history_length),
+            keypoint_history=kp_hist,
+            pose_history=pose_hist,
             age=1,
             hits=1,
             time_since_update=0,

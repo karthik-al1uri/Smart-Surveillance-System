@@ -27,25 +27,6 @@
 ---
 
 
-## Phase 3: Pose Estimation (YOLOv8-Pose)
-**Status:** NOT STARTED
-**Goal:** Extract 17-point COCO skeleton keypoints for each detected person.
-
-**Tasks:**
-- [ ] Implement `src/detection/pose_estimator.py` — Run YOLOv8-Pose on frames
-- [ ] Output per-person keypoints: 17 joints × (x, y, confidence)
-- [ ] Handle occluded/missing keypoints (low confidence filtering)
-- [ ] Optionally combine with Phase 2 (YOLOv8-Pose does detection + pose in one pass)
-- [ ] Write `tests/test_pose.py` 
-
-**Key Decisions:**
-- Use YOLOv8m-Pose for single-pass detection + pose (saves GPU compute)
-- If using single-pass, Phase 2's standalone detector becomes a fallback/alternative
-
-⚠️ HUMAN INPUT REQUIRED:
-- Download YOLOv8m-Pose weights: `yolov8m-pose.pt` → place in `models/` 
-
----
 
 ## Phase 4: Person Tracking (ByteTrack / BoT-SORT)
 **Status:** NOT STARTED

@@ -29,26 +29,6 @@
 
 
 
-## Phase 8: Clip Capture & Storage Service
-**Status:** NOT STARTED
-**Goal:** When alert triggers, extract and store a 10-15 second video clip from the frame buffer.
-
-**Tasks:**
-- [ ] Implement `src/alerts/clip_capture.py` — Rolling frame buffer (20 sec per camera)
-- [ ] On trigger: extract 10 sec before + 5 sec after event timestamp
-- [ ] Encode clip as MP4 (H.264) using FFmpeg
-- [ ] Store with metadata: event_id, camera_id, timestamp, file_path
-- [ ] Implement retention policy (auto-delete after configurable days, default 30)
-- [ ] Write `tests/test_clip_capture.py` 
-
-**Key Decisions:**
-- Storage: local disk for single-node, MinIO for multi-node
-- Clip naming: `{camera_id}_{timestamp}_{event_id}.mp4` 
-
-**No human input required for this phase.**
-
----
-
 ## Phase 9: Alert & Notification Service
 **Status:** NOT STARTED
 **Goal:** Deliver alerts through configured channels.

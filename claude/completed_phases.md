@@ -240,3 +240,44 @@ To get meaningful predictions, train the model:
 - [x] Write `tests/test_scoring.py` — 48 tests, all passing
 - [x] Create `scripts/demo_scoring.py`
 - [x] 202/202 total tests passing, zero regressions
+
+---
+
+## Phase 8: Clip Capture & Storage Service
+**Status:** ✅ COMPLETED
+**Completed:** 2026-06-30
+**Branch:** phase-8/clip-capture
+
+**Implementation Notes:**
+- Rolling buffer: JPEG-compressed frames in memory (default 20s × 10fps = 200 frames ≈ 10 MB/camera)
+- Uncompressed budget for reference: 200 frames × 2.8 MB = ~560 MB/camera at 720p
+- Async clip processing: `ClipCaptureService` queues requests and processes them after `post_seconds` elapsed (wall-clock), so post-event frames are always available
+- Clip files named `{camera_id}_{YYYYMMDD_HHMMSS}_{event_id}.mp4` under `data/clips/{camera_id}/`
+- Retention: clips auto-deleted after `retention_days` (default 30); enforcement runs every hour in background thread
+- `AlertIntegration` glue layer: ALERT → priority=1, ESCALATED → priority=2
+- Tests use `past = time.time() - 20.0` pattern so synthetic frame timestamps are always in-buffer and post-event delay is already elapsed
+- 40 clip tests + 242 total tests; zero regressions
+
+**Known limitations:**
+- Encoder uses OpenCV `mp4v` codec (not H.264); H.264 requires FFmpeg or platform codec
+- Memory is per-registered camera; unregistered cameras are silently dropped
+
+**Files Created/Modified:**
+- `src/alerts/clip_models.py` — `ClipRequest`, `ClipMetadata`, `StorageStats`
+- `src/alerts/rolling_buffer.py` — `RollingFrameBuffer` with JPEG compression and thread safety
+- `src/alerts/clip_encoder.py` — `ClipEncoder` using OpenCV `VideoWriter`
+- `src/alerts/clip_capture.py` — `ClipCaptureService` with async background thread and retention
+- `src/alerts/alert_integration.py` — `AlertIntegration` glue layer
+- `config/default.yaml` — Expanded `storage` section (already done in Phase 7)
+- `tests/test_clip_capture.py` — 40 tests, all passing
+- `scripts/demo_clip_capture.py` — Full pipeline demo with clip output
+
+**Tasks completed:**
+- [x] Define `ClipRequest`, `ClipMetadata`, `StorageStats`
+- [x] Implement `RollingFrameBuffer` with optional JPEG compression
+- [x] Implement `ClipEncoder` (OpenCV MP4)
+- [x] Implement `ClipCaptureService` with async processing and retention
+- [x] Implement `AlertIntegration` glue layer
+- [x] Write `tests/test_clip_capture.py` — 40 tests, all passing
+- [x] Create `scripts/demo_clip_capture.py`
+- [x] 242/242 total tests passing, zero regressions

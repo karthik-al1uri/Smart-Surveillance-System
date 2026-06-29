@@ -1,0 +1,41 @@
+cameras: []
+
+detection:
+  model_path: "models/yolov8m.pt"
+  input_size: 640
+  confidence_threshold: 0.45
+  iou_threshold: 0.5
+  batch_size: 4
+  device: "cpu"
+  target_classes:
+    - person
+    - car
+    - truck
+    - bus
+    - motorcycle
+    - bicycle
+    - backpack
+    - handbag
+    - knife
+    - scissors
+
+pose:
+  model_path: "models/yolov8m-pose.pt"
+  input_size: 640
+  confidence_threshold: 0.45
+  iou_threshold: 0.5
+  device: "cpu"
+  keypoint_confidence_threshold: 0.3
+
+ingestion:
+  frame_queue_size: 30
+  target_fps: 2
+  reconnect_delay_seconds: 5
+
+storage:
+  clip_retention_days: 30
+  clip_storage_path: "data/clips"
+
+logging:
+  level: "INFO"
+  format: "json"

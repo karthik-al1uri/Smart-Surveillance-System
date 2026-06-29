@@ -201,3 +201,42 @@ To get meaningful predictions, train the model:
 - [x] Write `tests/test_zone_engine.py` — 35 tests, all passing
 - [x] Create `scripts/demo_zones.py`
 - [x] 154/154 total tests passing, zero regressions
+
+---
+
+## Phase 7: Anomaly Scoring Engine
+**Status:** ✅ COMPLETED
+**Completed:** 2026-06-30
+**Branch:** phase-7/anomaly-scoring
+
+**Implementation Notes:**
+- Weighted formula: `score = 0.35×action + 0.25×zone + 0.30×weapon + 0.10×time_of_day`
+- Instant alerts for weapon detection (knife/gun/rifle/scissors) — bypass formula, score=1.0, ESCALATED
+- Hysteresis: N consecutive high-score frames required before ALERT (default N=2)
+- Cooldown: suppress duplicate alerts per (camera_id, track_id) pair (default 30s)
+- ESCALATED events bypass cooldown; weapon alerts bypass both hysteresis and cooldown
+- Per-camera config overrides: different thresholds/weights per camera
+- Non-person events (abandoned object, crowd limit) scored with zone signal only
+- State cleanup: stale tracks purged after 60s of inactivity
+- 48 scoring tests + 202 total tests; zero regressions
+
+**Known limitations:**
+- Action signal value for SUSPICIOUS multiplied by 0.7, URGENT by 0.9 (per spec)
+- Weapon cooldown uses a hash of class_name as pseudo-track-id (no actual track association)
+
+**Files Created/Modified:**
+- `src/scoring/scoring_models.py` — `AlertDecision`, `SignalType`, `ScoringSignal`, `ScoredEvent`, `ScoringConfig`
+- `src/scoring/anomaly_scorer.py` — `AnomalyScorer` with full stateful logic
+- `src/scoring/scoring_pipeline.py` — `ScoringPipeline` orchestrator with output queues
+- `config/default.yaml` — Added `scoring` section + expanded `storage` section
+- `tests/test_scoring.py` — 48 tests, all passing
+- `scripts/demo_scoring.py` — Full pipeline demo with scoring printout
+
+**Tasks completed:**
+- [x] Define `AlertDecision`, `SignalType`, `ScoringSignal`, `ScoredEvent`, `ScoringConfig`
+- [x] Implement `AnomalyScorer` with weighted scoring, hysteresis, cooldown, per-camera config
+- [x] Add `scoring` section to `config/default.yaml` with per-camera override support
+- [x] Implement `ScoringPipeline` orchestrator
+- [x] Write `tests/test_scoring.py` — 48 tests, all passing
+- [x] Create `scripts/demo_scoring.py`
+- [x] 202/202 total tests passing, zero regressions

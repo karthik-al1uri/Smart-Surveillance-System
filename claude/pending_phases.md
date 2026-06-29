@@ -29,27 +29,6 @@
 
 
 
-## Phase 7: Anomaly Scoring Engine
-**Status:** NOT STARTED
-**Goal:** Aggregate all signals into a severity score. Make alert decisions.
-
-**Tasks:**
-- [ ] Implement `src/scoring/anomaly_scorer.py` — Weighted scoring formula
-- [ ] Inputs: action classification, object detection (weapons), zone violations, time context
-- [ ] Configurable weights and thresholds per camera
-- [ ] Cooldown logic: suppress duplicate alerts for ongoing events
-- [ ] Hysteresis: require N consecutive high-confidence windows before alerting
-- [ ] Write `tests/test_scoring.py` 
-
-**Scoring formula (default):**
-```
-score = 0.4 × action_confidence + 0.3 × weapon_detected + 0.2 × zone_violation + 0.1 × time_risk
-```
-
-**No human input required for this phase.**
-
----
-
 ## Phase 8: Clip Capture & Storage Service
 **Status:** NOT STARTED
 **Goal:** When alert triggers, extract and store a 10-15 second video clip from the frame buffer.

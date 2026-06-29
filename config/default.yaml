@@ -31,6 +31,14 @@ pose:
 pipeline:
   skip_object_detection: false
 
+tracker:
+  max_lost_frames: 30
+  iou_threshold_high: 0.3
+  iou_threshold_low: 0.5
+  confidence_split: 0.5
+  min_hits: 3
+  history_length: 64
+
 ingestion:
   frame_queue_size: 30
   target_fps: 2

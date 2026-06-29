@@ -1,0 +1,20 @@
+SMART SURVEILLANCE SYSTEM — DEVELOPMENT PHASES
+================================================
+
+Phase 1: Stream Ingestion & Frame Extraction
+Phase 2: Object Detection (YOLOv8)
+Phase 3: Pose Estimation (YOLOv8-Pose)
+Phase 4: Person Tracking (ByteTrack/BoT-SORT)
+Phase 5: Action Recognition (Keypoint LSTM / ST-GCN)
+Phase 6: Zone & Rule Engine
+Phase 7: Anomaly Scoring Engine
+Phase 8: Clip Capture & Storage Service
+Phase 9: Alert & Notification Service
+Phase 10: Event Database & API Layer
+Phase 11: Operator Dashboard (React Frontend)
+Phase 12: Model Management & Hot Swap
+Phase 13: Docker Containerization & Deployment
+Phase 14: Testing, Benchmarking & CI/CD
+
+See claude/pending_phases.md for full details on each phase.
+See claude/completed_phases.md for phases that have been finished.

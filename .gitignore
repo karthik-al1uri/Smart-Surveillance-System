@@ -1,0 +1,37 @@
+# Model weights (large binary files)
+models/*.pt
+models/*.onnx
+models/*.engine
+models/*.trt
+!models/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+*.env
+
+# Node (dashboard)
+src/dashboard/node_modules/
+src/dashboard/build/
+
+# IDE
+.vscode/
+.idea/
+
+# Data
+*.mp4
+*.avi
+datasets/
+*.csv
+*.json
+!config/*.yaml
+!config/*.json
+
+# OS
+.DS_Store
+Thumbs.db

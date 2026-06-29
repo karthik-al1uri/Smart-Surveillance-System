@@ -29,35 +29,6 @@
 
 
 
-## Phase 5: Action Recognition (Keypoint Classifier)
-**Status:** NOT STARTED
-**Goal:** Classify activity of each tracked person over a temporal window (16-32 frames).
-
-**Tasks:**
-- [ ] Implement `src/recognition/keypoint_classifier.py` — LSTM/GRU network on keypoint sequences
-- [ ] Implement `src/recognition/sliding_window.py` — Manage temporal windows per track
-- [ ] Activity classes: Normal, Violent (fight/assault), Suspicious (loitering/intrusion), Urgent (fall/collapse)
-- [ ] Output: class_label, confidence_score, sub_label
-- [ ] Implement overlapping windows (classify every 8 frames, not every 16) to reduce latency
-- [ ] Write `tests/test_recognition.py` 
-- [ ] Create `training/models/keypoint_lstm.py` — Training script for the LSTM classifier
-
-**Key Decisions:**
-- Approach A (keypoint-based LSTM) for initial version — fast, lightweight, privacy-preserving
-- Temporal window: 16 frames at 2 fps = 8 seconds
-- Overlap stride: 8 frames (classify every 4 seconds)
-
-⚠️ HUMAN INPUT REQUIRED:
-- For training: Need action recognition dataset. Options:
-  1. UCF-Crime dataset (download script in `scripts/download_ucf_crime.sh`)
-  2. RWF-2000 dataset (violence detection)
-  3. NTU RGB+D (skeleton-based action recognition)
-  4. Custom annotated dataset from your own CCTV footage
-- Provide preference on which dataset(s) to use
-- Training requires GPU — confirm GPU availability for training
-
----
-
 ## Phase 6: Zone & Rule Engine
 **Status:** NOT STARTED
 **Goal:** Apply spatial and temporal rules to detections. Check restricted zone violations.

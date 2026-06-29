@@ -111,3 +111,57 @@
 - [x] Handle track creation, update, lost, removal lifecycle
 - [x] Write `tests/test_tracker.py` — 27 tests, all passing
 - [x] 91/91 total tests passing, zero regressions
+
+---
+
+## Phase 5: Action Recognition (Keypoint LSTM Classifier)
+**Status:** ✅ COMPLETED
+**Completed:** 2026-06-30
+**Branch:** phase-5/action-recognition
+
+**Implementation Notes:**
+- Bi-LSTM with attention pooling — 2 layers, 128 hidden units per direction, 256 combined
+- Currently using DUMMY model (random weights) — not trained on real data
+- Training pipeline ready — needs dataset (UCF-Crime / RWF-2000 / NTU RGB+D or custom)
+- Sliding window: 16 frames, stride 8, 50% overlap → classification every ~4 seconds at 2fps
+- 15 fine-grained ActionLabels mapped to 4 ActionCategories (Normal/Violent/Suspicious/Urgent)
+- Hip-center normalization makes classifier position/scale invariant
+- Missing keypoints linearly interpolated across frames; all-missing set to 0
+- `ActionRecognitionPipeline` is decoupled from detection pipeline for modularity
+- 119/119 total tests passing, zero regressions
+
+**⚠️ TRAINING REQUIRED:**
+To get meaningful predictions, train the model:
+1. Prepare dataset: `python scripts/extract_keypoints.py --input_dir <raw_videos> --label <int>`
+2. Train: `python training/train_action.py --dataset_dir training/datasets/processed/`
+3. Evaluate: `python training/evaluate_action.py --model_path models/action_classifier_v1.pt --test_dir training/datasets/processed/test/`
+
+**Files Created/Modified:**
+- `src/recognition/action_classes.py` — `ActionCategory`, `ActionLabel`, `LABEL_TO_CATEGORY`, `ActionPrediction`
+- `src/recognition/sliding_window.py` — `SlidingWindowManager`, `WindowData`
+- `src/recognition/keypoint_lstm.py` — `KeypointLSTM`, `AttentionPooling`
+- `src/recognition/keypoint_preprocessor.py` — `KeypointPreprocessor` (normalize + impute)
+- `src/recognition/action_classifier.py` — `ActionClassifier` with dummy model support
+- `src/recognition/recognition_pipeline.py` — `ActionRecognitionPipeline`
+- `training/train_action.py` — Cross-entropy + Adam + ReduceLROnPlateau + early stopping
+- `training/evaluate_action.py` — Per-class P/R/F1 + confusion matrix
+- `training/export_action.py` — ONNX export
+- `scripts/extract_keypoints.py` — Video → keypoint windows via full pipeline
+- `scripts/create_dummy_dataset.py` — Synthetic sequences for 5 action classes
+- `scripts/demo_action.py` — Full pipeline demo with action labels
+- `tests/test_recognition.py` — 28 tests, all passing
+- `config/default.yaml` — Added `action_recognition` section
+
+**Tasks completed:**
+- [x] Define action classes and ActionPrediction dataclass
+- [x] Implement SlidingWindowManager with stride/overlap and quality filter
+- [x] Implement KeypointLSTM with AttentionPooling
+- [x] Implement KeypointPreprocessor with hip-center normalization
+- [x] Implement ActionClassifier with dummy model fallback
+- [x] Create training, evaluation, and ONNX export scripts
+- [x] Create synthetic dataset generator and keypoint extraction script
+- [x] Generate dummy model weights (models/action_classifier_v1.pt)
+- [x] Implement ActionRecognitionPipeline (decoupled from detection)
+- [x] Add action_recognition section to config/default.yaml
+- [x] Write tests/test_recognition.py — 28 tests, all passing
+- [x] 119/119 total tests passing, zero regressions

@@ -26,6 +26,10 @@ pose:
   iou_threshold: 0.5
   device: "cpu"
   keypoint_confidence_threshold: 0.3
+  single_pass_mode: true
+
+pipeline:
+  skip_object_detection: false
 
 ingestion:
   frame_queue_size: 30

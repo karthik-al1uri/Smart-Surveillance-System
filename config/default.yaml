@@ -59,9 +59,45 @@ ingestion:
   target_fps: 2
   reconnect_delay_seconds: 5
 
+scoring:
+  weights:
+    action: 0.35
+    zone: 0.25
+    weapon: 0.30
+    time_of_day: 0.10
+
+  alert_threshold: 0.55
+  escalation_threshold: 0.85
+
+  instant_alert_classes:
+    - "knife"
+    - "gun"
+    - "rifle"
+    - "scissors"
+
+  cooldown_seconds: 30
+  hysteresis_count: 2
+
+  high_risk_hours: [22, 23, 0, 1, 2, 3, 4, 5]
+  time_risk_multiplier: 0.15
+
+  stale_track_cleanup_seconds: 60
+
+  camera_overrides: {}
+
 storage:
+  clip_dir: "data/clips"
   clip_retention_days: 30
   clip_storage_path: "data/clips"
+  clip_codec: "mp4v"
+  clip_fps: 10
+  clip_quality: 85
+  max_clip_duration: 20
+  retention_days: 30
+  clip_buffer_duration: 20
+  clip_buffer_fps: 10
+  clip_buffer_compressed: true
+  retention_check_interval: 3600
 
 logging:
   level: "INFO"

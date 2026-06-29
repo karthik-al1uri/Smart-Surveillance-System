@@ -165,3 +165,39 @@ To get meaningful predictions, train the model:
 - [x] Add action_recognition section to config/default.yaml
 - [x] Write tests/test_recognition.py — 28 tests, all passing
 - [x] 119/119 total tests passing, zero regressions
+
+---
+
+## Phase 6: Zone & Rule Engine
+**Status:** ✅ COMPLETED
+**Completed:** 2026-06-30
+**Branch:** phase-6/zone-engine
+
+**Implementation Notes:**
+- Rule types implemented: `no_entry`, `loitering`, `intrusion`, `crowd_limit`, `abandoned_object`
+- Zone scheduling with overnight support (e.g. 22:00–06:00 crosses midnight correctly)
+- Shapely `Polygon` objects cached per `zone_id` — not recreated every frame
+- Person position uses bbox bottom-center by default (feet position for "standing in zone")
+- State persisted across frames: dwell times, intrusion triggers, cooldown timestamps
+- State auto-cleaned when tracks disappear
+- `ZoneManager.save_to_config()` persists zones back to YAML for operator workflow
+- 35 zone tests + 154 total tests passing; zero regressions from earlier phases
+
+**Files Created/Modified:**
+- `src/scoring/zone_models.py` — `Zone`, `Rule`, `ZoneViolation`, `ZoneType`, `RuleType`
+- `src/scoring/zone_manager.py` — `ZoneManager` with CRUD, YAML I/O, schedule logic
+- `src/scoring/zone_engine.py` — `ZoneEngine` with all rule types, state, Shapely geometry
+- `src/common/visualization.py` — Added `draw_zones`, `draw_violations`
+- `tests/test_zone_engine.py` — 35 tests, all passing
+- `scripts/demo_zones.py` — CLI demo with 3 predefined zones, violation printout
+- `requirements.txt` — Added `shapely>=2.0.0`
+
+**Tasks completed:**
+- [x] Verify shapely dependency
+- [x] Define `Zone`, `Rule`, `ZoneViolation` data structures
+- [x] Implement `ZoneManager` with CRUD, config load/save, schedule checking
+- [x] Implement `ZoneEngine` with `no_entry`, `loitering`, `intrusion`, `crowd_limit`, `abandoned_object`
+- [x] Add zone visualization (`draw_zones`, `draw_violations`)
+- [x] Write `tests/test_zone_engine.py` — 35 tests, all passing
+- [x] Create `scripts/demo_zones.py`
+- [x] 154/154 total tests passing, zero regressions

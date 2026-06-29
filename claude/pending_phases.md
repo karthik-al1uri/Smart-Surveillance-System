@@ -29,22 +29,6 @@
 
 
 
-## Phase 6: Zone & Rule Engine
-**Status:** NOT STARTED
-**Goal:** Apply spatial and temporal rules to detections. Check restricted zone violations.
-
-**Tasks:**
-- [ ] Implement `src/scoring/zone_engine.py` — Point-in-polygon checks using Shapely
-- [ ] Store zone polygons per camera in config/database
-- [ ] Define rule schema: zone_id, time_window, allowed_classes, dwell_time_limit
-- [ ] Evaluate rules: "Person in Zone A after 10 PM", "Loitering > 5 min in Zone B"
-- [ ] Output rule violations with zone_id and violation details
-- [ ] Write `tests/test_zone_engine.py` 
-
-**No human input required for this phase.**
-
----
-
 ## Phase 7: Anomaly Scoring Engine
 **Status:** NOT STARTED
 **Goal:** Aggregate all signals into a severity score. Make alert decisions.

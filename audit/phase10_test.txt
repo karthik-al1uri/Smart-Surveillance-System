@@ -1,0 +1,11 @@
+
+======================================================================
+PART 2: Phase 10: API Server
+======================================================================
+GET /system/health: 401
+POST /auth/login: 200
+  Token obtained: OK
+GET /api/v1/cameras: 200
+GET /api/v1/events: 200
+GET /api/v1/alerts: 200
+GET /api/v1/models/status: 200

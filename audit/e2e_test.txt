@@ -1,0 +1,6 @@
+
+======================================================================
+PART 3: End-to-End Pipeline Test
+======================================================================
+✗ No test video found at assets/test_video.mp4. Cannot run E2E test.
+  USER ACTION NEEDED: Provide a video file at assets/test_video.mp4

@@ -1,0 +1,19 @@
+
+======================================================================
+PART 1.4: Model Files & Load Check
+======================================================================
+models/ directory exists: True
+Files found: 5
+  yolov8m-pose.pt (53266977 bytes)
+  registry.json (335 bytes)
+  action_classifier_v1.pt (2402337 bytes)
+  .gitkeep (0 bytes)
+  yolov8m.pt (52136884 bytes)
+
+YOLOv8m detection: OK — 80 classes
+YOLOv8m-pose: OK — 1 classes
+Action classifier: OK — keys=['model_state_dict', 'model_info', 'is_dummy', 'note']
+
+Device availability:
+  CUDA available: False
+  Running CPU-only mode

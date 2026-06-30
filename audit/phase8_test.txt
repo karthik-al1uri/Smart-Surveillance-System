@@ -1,0 +1,7 @@
+
+======================================================================
+PART 2: Phase 8: Clip Capture
+======================================================================
+Rolling buffer: OK (covers 4.8s)
+Clip extraction: OK (14 frames)
+Clip encoding: OK (/Users/genjishimada49/Documents/Enertech/Smart-Surveillance-System/audit/test_clips/test_cam/test_cam_20260701_004031_test_evt.mp4, 501954 bytes, 2.6s)

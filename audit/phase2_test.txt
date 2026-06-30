@@ -1,0 +1,11 @@
+
+======================================================================
+PART 2: Phase 2: Object Detection
+======================================================================
+Preprocessor: ERROR — 'FramePreprocessor' object has no attribute 'preprocess_single'
+YOLO detector: ERROR — 'YOLODetector' object has no attribute 'detect_single'
+Traceback (most recent call last):
+  File "/Users/genjishimada49/Documents/Enertech/Smart-Surveillance-System/scripts/run_full_audit.py", line 330, in test_detection
+    dets = detector.detect_single(test_frame)
+           ^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'YOLODetector' object has no attribute 'detect_single'

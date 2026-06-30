@@ -1,0 +1,10 @@
+
+======================================================================
+PART 2: Phase 1: Ingestion
+======================================================================
+Test video: /Users/genjishimada49/Documents/Enertech/Smart-Surveillance-System/assets/test_video.mp4
+  exists: False
+Searching for any video file...
+  Found: /Users/genjishimada49/Documents/Enertech/Smart-Surveillance-System/audit/test_clips/test_cam/test_cam_20260701_003640_test_evt.mp4
+Frame buffer: ERROR — No module named 'src.ingestion.frame_buffer'
+Stream reader: SKIPPED (no test video)

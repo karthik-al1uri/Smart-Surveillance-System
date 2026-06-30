@@ -1,0 +1,9 @@
+
+======================================================================
+PART 2: Phase 5: Action Recognition
+======================================================================
+KeypointLSTM forward: OK (output shape: torch.Size([1, 15]))
+Action classifier: OK (initialized)
+  Model file not found: models/action_classifier_v1.pt — using random weights
+  STATUS: predictions will be RANDOM until trained on a real dataset
+Sliding window: OK (0 windows ready after 20 frames)

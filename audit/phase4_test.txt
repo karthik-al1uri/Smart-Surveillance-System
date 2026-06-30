@@ -1,0 +1,6 @@
+
+======================================================================
+PART 2: Phase 4: Person Tracking
+======================================================================
+ByteTracker: OK (initialized)
+  Methods: ['get_active_tracks', 'get_stats', 'get_track', 'get_track_keypoint_sequence', 'reset', 'update']...

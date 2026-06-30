@@ -1,0 +1,6 @@
+
+======================================================================
+PART 2: Phase 7: Anomaly Scoring
+======================================================================
+Anomaly scorer: OK
+  Score: 0.312 | Decision: AlertDecision.NO_ALERT | Category: 1

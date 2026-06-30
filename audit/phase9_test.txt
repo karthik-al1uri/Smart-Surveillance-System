@@ -1,0 +1,11 @@
+
+======================================================================
+PART 2: Phase 9: Alert Service
+======================================================================
+Alert builder: OK
+  Title: Fighting detected — Camera test_cam
+  Priority: AlertPriority.HIGH
+  Description: Violent activity detected with 82% confidence. Event: fighting. Contributing fac...
+WebSocket notifier: OK (initialized, not started)
+Webhook notifier: OK (initialized, not started)
+Email notifier: OK (initialized, not started)

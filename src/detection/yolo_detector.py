@@ -15,6 +15,8 @@ import numpy as np
 
 from src.common.config import get_project_root, load_config
 from src.common.logger import get_logger
+from src.common.model_manager import ModelManager
+from src.common.model_manager_models import ModelType
 
 logger = get_logger("detection.yolo")
 
@@ -78,7 +80,7 @@ class YOLODetector:
         SystemExit: If ``ultralytics`` is not installed.
     """
 
-    def __init__(self, config: Optional[Dict] = None) -> None:
+    def __init__(self, config: Optional[Dict] = None, model_manager: Optional[ModelManager] = None) -> None:
         self._cfg = config or load_config()
         det_cfg = self._cfg["detection"]
 
@@ -89,9 +91,17 @@ class YOLODetector:
         self._batch_size: int = det_cfg["batch_size"]
         self._device: str = det_cfg.get("device", "cpu")
         self._target_classes: List[str] = det_cfg.get("target_classes", [])
+        self._model_manager = model_manager
 
-        self._validate_weights()
-        self._model = self._load_model()
+        if self._model_manager is not None:
+            self._model = self._model_manager.get(ModelType.DETECTOR)
+            if self._model is None:
+                logger.info("No active detector in ModelManager; falling back to config model")
+                self._validate_weights()
+                self._model = self._load_model()
+        else:
+            self._validate_weights()
+            self._model = self._load_model()
         self._class_names: Dict[int, str] = self._model.names
 
     def _validate_weights(self) -> None:

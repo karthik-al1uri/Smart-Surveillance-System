@@ -15,6 +15,9 @@ from src.api.repositories import (
     EventRepository,
     UserRepository,
 )
+from src.common.config import load_config
+from src.common.model_manager import ModelManager
+from src.common.model_registry import ModelRegistry
 
 _session_factory: sessionmaker | None = None
 
@@ -62,3 +65,19 @@ def get_alert_repo(db: Session = Depends(get_db)) -> AlertRepository:
 def get_user_repo(db: Session = Depends(get_db)) -> UserRepository:
     """Dependency: return a UserRepository for the current request."""
     return UserRepository(db)
+
+
+# Model registry / manager singletons configured from default config
+_cfg = load_config()
+_registry = ModelRegistry(_cfg.get("model_management", {}).get("registry_path", "models/registry.json"))
+_model_manager = ModelManager(_registry)
+
+
+def get_model_registry() -> ModelRegistry:
+    """Dependency: return the global ModelRegistry singleton."""
+    return _registry
+
+
+def get_model_manager() -> ModelManager:
+    """Dependency: return the global ModelManager singleton."""
+    return _model_manager

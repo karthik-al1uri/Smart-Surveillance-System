@@ -16,6 +16,7 @@ import numpy as np
 
 from src.common.config import load_config
 from src.common.logger import get_logger
+from src.common.model_manager import ModelManager
 from src.detection.pose_estimator import PoseEstimator
 from src.detection.pose_structures import PoseResult
 from src.detection.yolo_detector import Detection, YOLODetector
@@ -109,14 +110,16 @@ class CombinedDetectionPipeline:
         self,
         config: Optional[Dict] = None,
         frame_buffer: Optional[queue.Queue] = None,
+        model_manager: Optional[ModelManager] = None,
     ) -> None:
         self._cfg = config or load_config()
         self._pose_estimator = PoseEstimator(config=self._cfg)
         self._skip_obj = self._cfg.get("pipeline", {}).get("skip_object_detection", False)
         self._tracker: Optional["ByteTracker"] = ByteTracker(config=self._cfg) if TRACKER_AVAILABLE else None
+        self._model_manager = model_manager
 
         if not self._skip_obj:
-            self._obj_detector = YOLODetector(config=self._cfg)
+            self._obj_detector = YOLODetector(config=self._cfg, model_manager=model_manager)
         else:
             self._obj_detector = None
 

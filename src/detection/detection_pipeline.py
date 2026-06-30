@@ -13,6 +13,7 @@ import numpy as np
 
 from src.common.config import load_config
 from src.common.logger import get_logger
+from src.common.model_manager import ModelManager
 from src.detection.preprocessor import FramePreprocessor
 from src.detection.yolo_detector import DetectionResult, YOLODetector
 
@@ -27,11 +28,12 @@ class DetectionPipeline:
             the default config is loaded automatically.
     """
 
-    def __init__(self, config: Optional[Dict] = None) -> None:
+    def __init__(self, config: Optional[Dict] = None, model_manager: Optional[ModelManager] = None) -> None:
         self._cfg = config or load_config()
         input_size: int = self._cfg["detection"]["input_size"]
         self._preprocessor = FramePreprocessor(input_size=input_size)
-        self._detector = YOLODetector(config=self._cfg)
+        self._detector = YOLODetector(config=self._cfg, model_manager=model_manager)
+        self._model_manager = model_manager
         logger.info("DetectionPipeline initialised (input_size=%d).", input_size)
 
     def process_frame(self, frame: np.ndarray, frame_idx: int = 0) -> DetectionResult:

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 import os
+from datetime import datetime, timezone
 from pathlib import Path
 from threading import Lock
 from typing import Optional
@@ -110,8 +111,9 @@ class ModelRegistry:
             target = self._models.get(model_id)
             if target is None:
                 raise KeyError(f"Model not found: {model_id}")
+            # Allow reactivating a retired model (e.g. rollback) by resetting its status.
             if target.status == ModelStatus.RETIRED:
-                raise ValueError(f"Cannot activate a retired model: {model_id}")
+                target.status = ModelStatus.REGISTERED
 
             # Retire current active model for this type
             for mv in self._models.values():
@@ -119,9 +121,8 @@ class ModelRegistry:
                     mv.status = ModelStatus.RETIRED
                     logger.info("Retired model %s", mv.model_id)
 
-            from datetime import datetime
             target.status = ModelStatus.ACTIVE
-            target.activated_at = datetime.utcnow().isoformat()
+            target.activated_at = datetime.now(timezone.utc).isoformat()
             self.save()
             logger.info("Activated model %s", model_id)
             return target

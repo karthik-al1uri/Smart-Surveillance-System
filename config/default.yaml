@@ -39,6 +39,11 @@ tracker:
   min_hits: 3
   history_length: 64
 
+model_management:
+  registry_path: "models/registry.json"
+  models_dir: "models"
+  auto_register: true
+
 action_recognition:
   model_path: "models/action_classifier_v1.pt"
   device: "cpu"

@@ -7,7 +7,7 @@ Defines enums and dataclasses used by the model registry and model manager.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
@@ -39,7 +39,7 @@ class ModelVersion:
     path: str
     description: str = ""
     status: ModelStatus = ModelStatus.REGISTERED
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     activated_at: Optional[str] = None
     metrics: dict = field(default_factory=dict)
 
@@ -65,7 +65,7 @@ class ModelVersion:
             path=data["path"],
             description=data.get("description", ""),
             status=ModelStatus(data.get("status", ModelStatus.REGISTERED.value)),
-            created_at=data.get("created_at", datetime.utcnow().isoformat()),
+            created_at=data.get("created_at", datetime.now(timezone.utc).isoformat()),
             activated_at=data.get("activated_at"),
             metrics=data.get("metrics", {}),
         )

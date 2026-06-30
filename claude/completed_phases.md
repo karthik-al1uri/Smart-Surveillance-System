@@ -5,6 +5,25 @@
 
 ---
 
+## Phase 12: Model Management & Hot Swap
+**Status:** ✅ COMPLETED
+**Completed:** 2026-07-01
+**Branch:** `phase-12/model-management` (merged to `main`)
+
+**Implementation Notes:**
+- Data structures: `ModelType`, `ModelStatus`, `ModelVersion`, `ModelSwapResult` in `src/common/model_manager_models.py`
+- JSON-backed `ModelRegistry` with CRUD, activate, retire, auto-registration from `models/` directory
+- Thread-safe `ModelManager` with hot-swap, rollback, and runtime status reporting
+- Supports `.pt`, `.onnx`, `.pkl` loading; falls back to stub for missing files
+- Integrated into `YOLODetector`, `DetectionPipeline`, and `CombinedDetectionPipeline` via optional `model_manager` injection
+- API routes under `/api/v1/models` for list, get, register, activate, retire, delete, rollback, status
+- Admin-only mutations; read endpoints require authenticated user
+- Config section `model_management` added to `config/default.yaml`
+- 25 backend tests (`test_model_management.py`, `test_model_api.py`) — all pass
+- Demo script `scripts/demo_model_management.py` exercises register → activate → swap → rollback
+
+---
+
 ## Phase 11: Operator Dashboard (React Frontend)
 **Status:** ✅ COMPLETED
 **Completed:** 2026-06-30

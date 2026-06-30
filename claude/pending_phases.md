@@ -30,19 +30,6 @@
 
 
 
-## Phase 12: Model Management & Hot Swap
-**Status:** NOT STARTED
-**Goal:** Manage model versions, enable hot-swapping without restart.
-
-**Tasks:**
-- [ ] Implement `src/common/model_manager.py` — Model registry and loader
-- [ ] Support model versioning and A/B testing
-- [ ] Rollback mechanism if new model underperforms
-- [ ] API endpoint to upload/activate new model versions
-
-**No human input required for this phase.**
-
----
 
 ## Phase 13: Docker Containerization & Deployment
 **Status:** NOT STARTED

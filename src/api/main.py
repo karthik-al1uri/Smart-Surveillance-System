@@ -17,6 +17,7 @@ from src.api.routes.camera_routes import router as camera_router
 from src.api.routes.clip_routes import router as clip_router
 from src.api.routes.config_routes import router as config_router, set_runtime_config
 from src.api.routes.event_routes import router as event_router
+from src.api.routes.stream_routes import router as stream_router
 from src.api.routes.user_routes import router as user_router
 from src.common.config import load_config
 from src.common.db import create_engine_from_config, get_session_factory, init_db
@@ -69,6 +70,7 @@ def create_app(config: dict | None = None, engine=None) -> FastAPI:
     app.include_router(clip_router, prefix="/api/v1/clips", tags=["clips"])
     app.include_router(config_router, prefix="/api/v1", tags=["config"])
     app.include_router(user_router, prefix="/api/v1/users", tags=["users"])
+    app.include_router(stream_router, prefix="/api/v1", tags=["stream"])
 
     return app
 

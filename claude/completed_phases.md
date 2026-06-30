@@ -5,6 +5,28 @@
 
 ---
 
+## Phase 11: Operator Dashboard (React Frontend)
+**Status:** ✅ COMPLETED
+**Completed:** 2026-06-30
+**Branch:** `phase-11/dashboard` (merged to `main`)
+
+**Implementation Notes:**
+- React 19 + Vite 8 + TypeScript + Tailwind CSS v3
+- Zustand stores: `authStore`, `alertStore`, `appStore` (with dark mode + localStorage)
+- Axios API client with JWT interceptor and 401 redirect
+- Reconnecting WebSocket hook seeding `alertStore` with live alerts
+- Pages: Dashboard, Live Grid, Alert Queue, Event List, Event Detail, Zone Editor, Analytics, Settings, User Management, Login
+- Common UI: Badge, StatusDot, Pagination, EmptyState, LoadingSpinner, ConfirmDialog, ToastContainer
+- ZoneCanvas: HTML5 Canvas polygon drawing for zone configuration
+- ClipPlayer: HTML5 `<video>` with frame-step and playback speed controls
+- 6 chart types in Analytics via Recharts (area, bar, pie, heatmap)
+- Dark mode via Tailwind `class` strategy with localStorage persistence
+- Backend snapshot endpoint: `GET /api/v1/cameras/{camera_id}/snapshot`
+- 37 frontend tests (7 test files) — all pass
+- Production build verified (Vite, 831 kB JS, 31 kB CSS)
+
+---
+
 ## Phase 2: Object Detection (YOLOv8)
 **Status:** ✅ COMPLETED
 **Completed:** 2026-06-29

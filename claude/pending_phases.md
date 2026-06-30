@@ -29,26 +29,6 @@
 
 
 
-## Phase 11: Operator Dashboard (React Frontend)
-**Status:** NOT STARTED
-**Goal:** Web-based UI for live monitoring, alert review, zone editing, and analytics.
-
-**Tasks:**
-- [ ] Initialize React app in `src/dashboard/` 
-- [ ] Live Grid page: Multi-camera view with AI overlay
-- [ ] Alert Queue page: Filterable alert list
-- [ ] Event Detail page: Clip playback, frame overlay, feedback buttons
-- [ ] Zone Editor page: Draw polygons on camera view
-- [ ] Analytics page: Event heatmaps, trends
-- [ ] Settings page: Camera management, thresholds, notifications, users
-- [ ] WebSocket integration for real-time updates
-- [ ] Role-based access control (admin/operator/viewer)
-
-⚠️ HUMAN INPUT REQUIRED:
-- UI/UX preferences or mockups (optional — can use defaults)
-- Authentication method: basic auth, JWT, or OAuth?
-
----
 
 ## Phase 12: Model Management & Hot Swap
 **Status:** NOT STARTED
